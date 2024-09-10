@@ -8,19 +8,25 @@ import string
 nltk.download('wordnet')
 
 print()
+
+
 def part01():
     consume = wn.synset('consume.v.02')
     hyponyms = consume.closure(lambda s: s.hyponyms())
     return set(hyponyms)
+
+
 result = part01()
 print(result)
 print(len(result))
 print()
-print()
+
+
 def part02(synset_set):
     lemmas = {lemma for synset in synset_set for lemma in synset.lemma_names()}
     filtered_lemmas = {lemma for lemma in lemmas if '_' not in lemma}
     return filtered_lemmas
+
 
 synsets = part01()
 lemmas = part02(synsets)
@@ -34,6 +40,7 @@ except OSError:
     from spacy.cli import download
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
+
 
 def part03(texts, consume_terms):
     stop_words = set(stopwords.words('english'))
@@ -52,10 +59,11 @@ def part03(texts, consume_terms):
                 bigram_counter[(first_word, second_word)] += 1
     return bigram_counter
 
-#df = pd.read_csv('./1557tweets.csv')
+# df = pd.read_csv('./1557tweets.csv')
 
-#consume_terms = part02(part01())
+
+# consume_terms = part02(part01())
 res = part03(pd.read_csv('1557tweets.csv').text, part02(part01()))
-#res = part03(df['text'], consume_terms)
+# res = part03(df['text'], consume_terms)
 
 print(res.most_common(10))

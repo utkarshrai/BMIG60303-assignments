@@ -5,14 +5,14 @@ import re
 import nltk
 from nltk.util import ngrams
 from collections import Counter
-nltk.download('punkt')
+nltk.download('punkt', quiet=True)
 
 df = pd.read_excel(
     '/workspaces/BMIG60303-assignments/All_Articles_Excel_Dec2019July2020.xlsx')
 df = df[['Date Added', 'Author', 'Title', 'Abstract', 'Year']]
 pattern = r'\bItaly|Italian\b'
 print("Part 1")
-print("Absctract truncated to first 50 chars")
+print("Absctract truncated to first 100 chars")
 
 matches_l = []
 for index, row in df.iterrows():
@@ -27,7 +27,7 @@ top_matches = sorted(matches_l, key=lambda x: x[1], reverse=True)[:10]
 for i in top_matches:
     print(i[0])
     print(i[1])
-    print(i[2][:50]+'....')
+    print(i[2][:100]+'....')
 
 print()
 print("Part 2")

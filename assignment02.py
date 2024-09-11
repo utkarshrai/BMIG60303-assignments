@@ -50,11 +50,10 @@ def part03(texts, consume_terms):
         doc = nlp(text)
         tokens = [
             token.lemma_.lower() for token in doc
-            if token.lemma_.lower() not in stop_words and token.lemma_ not in punctuation and not token.is_punct
+            if token.lemma_.lower() not in stop_words and token.lemma_ not in punctuation
         ]
-        for i in range(len(tokens) - 1):
-            first_word = tokens[i]
-            second_word = tokens[i + 1]
+        bigrams = zip(tokens, tokens[1:])
+        for first_word, second_word in bigrams:
             if first_word in consume_terms:
                 bigram_counter[(first_word, second_word)] += 1
     return bigram_counter

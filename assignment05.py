@@ -5,7 +5,8 @@ import re
 import tarfile
 import tqdm
 import pandas as pd
-
+import gensim
+import nltk
 import numpy as np  # Keras takes care of most of this but it likes to see Numpy arrays
 from keras.preprocessing import sequence    # A helper module to handle padding input
 from keras.models import Sequential         # The base keras Neural Network model
@@ -17,11 +18,22 @@ from gensim.models import KeyedVectors
 
 # pull in a dataframe of ade texts and labels
 ade_df = pd.read_parquet("hf://datasets/ade-benchmark-corpus/ade_corpus_v2/Ade_corpus_v2_classification/train-00000-of-00001.parquet")
-ade_df.to_csv('ade_df.csv')    
+ade_df.to_csv('ade_df.csv', index = False)
+notes = '/kaggle/working/output.txt'
+
+documents = []
+with open(notes, 'r') as f:
+    for i,line in enumerate (f):
+        documents.append(nltk.word_tokenize(line.lower()))
 # Google pre-trained vectors, available here:
 # https://code.google.com/archive/p/word2vec/
 googlevecs = '/kaggle/input/googlenewsvectorsnegative300/GoogleNews-vectors-negative300.bin.gz'
-word_vectors = KeyedVectors.load_word2vec_format(googlevecs, binary=True, limit=200000)
+#word_vectors = KeyedVectors.load_word2vec_format(googlevecs, binary=True, limit=200000)
+
+#word_vectors = gensim.models.Word2Vec(documents,vector_size=150,window=6,min_count=2,workers=10,epochs=100)
+
+
+word_vectors = KeyedVectors.load_word2vec_format('/kaggle/input/glove6b300dtxt/glove.6B.300d.txt', no_header=True)
 
 def pre_process_data(filepath):
     """
@@ -115,13 +127,13 @@ Note: as discussed in class on Oct 17, 400 may be too large as a mex len for the
 The result would be many zero-vectors diluting the meaning of each document.
 A solution wouldbe to pick a smaller value of maxlen.
 """
-maxlen = 225
-batch_size = 32         # How many samples to show the net before backpropogating the error and updating the weights
+maxlen = 100
+batch_size = 64        # How many samples to show the net before backpropogating the error and updating the weights
 embedding_dims = 300    # Length of the token vectors we will create for passing into the Convnet
 filters = 250           # Number of filters we will train
 kernel_size = 3         # The width of the filters, actual filters will each be a matrix of weights of size: embedding_dims x kernel_size or 50 x 3 in our case
 hidden_dims = 250       # Number of neurons in the plain feed forward net at the end of the chain
-epochs = 3             # Number of times we will pass the entire training dataset through the network
+epochs = 5            # Number of times we will pass the entire training dataset through the network
 
 
 def pad_trunc(data, maxlen):

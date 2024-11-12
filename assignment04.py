@@ -81,7 +81,7 @@ def fit_and_print_lda(X, n_topics, vectorizer, n_top_words=10):
 
 tokenizer = TreebankWordTokenizer()
 custom_stopwords = set(stops).union(
-    {'covid', 'coronavirus', 'sars', 'cov', '19', 'doi'})
+    {'covid', 'coronavirus'})
 custom_stopwords_list = list(custom_stopwords)
 
 tfidf_vectorizer_custom_stopwords = TfidfVectorizer(
